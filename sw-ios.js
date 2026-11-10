@@ -1,6 +1,9 @@
-const CACHE_NAME = 'cartoon-short-kit-ios-v2';
+const CACHE_NAME = 'cartoon-short-kit-ios-v3';
 const CORE_ASSETS = [
-  './ios.html',\n  './studio.html',\n  './studio.css',\n  './studio.js',
+  './ios.html',
+  './studio.html',
+  './studio.css',
+  './studio.js',
   './manifest.webmanifest',
   './ios-icon.svg',
   './main.js',
