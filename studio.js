@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id), canvas=$('artboard'), ctx=canvas.getCon
 const W=canvas.width,H=canvas.height, STORAGE='cartoon-short-kit-studio-v1';
 const makeLayer=(name)=>({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),name,visible:true,items:[]});
 let project={version:1,name:'My Cartoon',background:'#ffffff',fps:12,frames:[{layers:[makeLayer('Sketch'),makeLayer('Line art')]}]};
-let frameIndex=0,layerIndex=1,tool='select',color='#202431',size=10,drawing=null,undoStack=[],playing=false,playTimer=null;
+let frameIndex=0,layerIndex=1,tool='pen',color='#202431',size=10,drawing=null,undoStack=[],playing=false,playTimer=null;
 const activeFrame=()=>project.frames[frameIndex],activeLayer=()=>activeFrame().layers[layerIndex]||activeFrame().layers[0];
 function snapshot(){undoStack.push(JSON.stringify(project));if(undoStack.length>30)undoStack.shift()}
 function setStatus(t){$('saveState').textContent=t}
@@ -33,7 +33,7 @@ function move(e){if(!drawing)return;e.preventDefault();const p=point(e);if(drawi
 function up(){if(!drawing)return;const d=drawing;if(d.type==='rect'||d.type==='ellipse'){d.x=Math.min(d.x1,d.x2);d.y=Math.min(d.y1,d.y2);d.w=d.x2-d.x1;d.h=d.y2-d.y1;delete d.x1;delete d.y1;delete d.x2;delete d.y2}activeLayer().items.push(d);drawing=null;render();renderFrames();save()}
 function showText(p){$('dialog').classList.remove('hidden');$('dialogInput').value='';$('dialogInput').focus();$('dialogOk').onclick=()=>{const t=$('dialogInput').value.trim();if(t){activeLayer().items.push({type:'text',text:t,x:p.x,y:p.y,color,size});render();renderFrames();save()}$('dialog').classList.add('hidden')};$('dialogCancel').onclick=()=>$('dialog').classList.add('hidden')}
 canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
-document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{tool=b.dataset.tool;document.querySelectorAll('[data-tool]').forEach(x=>x.classList.toggle('active',x===b))});
+document.querySelectorAll('[data-tool]').forEach(b=>{if(b.dataset.tool==='pen')b.classList.add('active');b.onclick=()=>{tool=b.dataset.tool;document.querySelectorAll('[data-tool]').forEach(x=>x.classList.toggle('active',x===b))}});
 $('color').oninput=e=>color=e.target.value;$('size').oninput=e=>{size=+e.target.value;$('sizeOut').value=size};
 $('bgColor').oninput=e=>{project.background=e.target.value;render();save()};
 $('undoBtn').onclick=()=>{const p=undoStack.pop();if(p){project=JSON.parse(p);frameIndex=Math.min(frameIndex,project.frames.length-1);layerIndex=0;renderAll();save()}};
