@@ -2,7 +2,7 @@
   "id": "./ios.html",
   "name": "Cartoon Short Kit",
   "short_name": "Cartoon Kit",
-  "description": "Play and preview vertical 2D cartoon shorts on your iPhone.",
+  "description": "Draw, animate, and preview 2D cartoon shorts on your iPhone.",
   "start_url": "./ios.html",
   "scope": "./",
   "display": "standalone",
