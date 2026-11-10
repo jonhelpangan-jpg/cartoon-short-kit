@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cartoon Studio">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./ios-icon.svg">
+<link rel="stylesheet" href="./studio.css">
+<title>Cartoon Short Kit — Studio</title>
+</head>
+<body>
+<header class="topbar">
+  <a class="back" href="./ios.html" aria-label="Back to preview">‹</a>
+  <div class="brand"><strong>Cartoon Studio</strong><small id="saveState">New project</small></div>
+  <button id="saveBtn" class="primary">Save</button>
+  <button id="menuBtn" class="iconbtn" aria-label="Project options">•••</button>
+</header>
+<main>
+  <section class="stage-wrap">
+    <div class="stage-head"><span>CANVAS · 9:16</span><span id="zoomLabel">100%</span></div>
+    <div class="stage">
+      <canvas id="artboard" width="720" height="1280" aria-label="Cartoon drawing canvas"></canvas>
+    </div>
+  </section>
+  <nav class="tools" aria-label="Drawing tools">
+    <button data-tool="select" class="tool active" title="Select">↖<small>Select</small></button>
+    <button data-tool="pen" class="tool" title="Pen">✎<small>Pen</small></button>
+    <button data-tool="eraser" class="tool" title="Eraser">◩<small>Eraser</small></button>
+    <button data-tool="line" class="tool" title="Line">／<small>Line</small></button>
+    <button data-tool="rect" class="tool" title="Rectangle">□<small>Rect</small></button>
+    <button data-tool="ellipse" class="tool" title="Ellipse">◯<small>Circle</small></button>
+    <button data-tool="text" class="tool" title="Text">T<small>Text</small></button>
+    <button id="undoBtn" class="tool" title="Undo">↶<small>Undo</small></button>
+  </nav>
+  <section class="controls">
+    <label class="color-control">Color <input id="color" type="color" value="#202431"></label>
+    <label class="size-control">Brush <input id="size" type="range" min="2" max="64" value="10"><output id="sizeOut">10</output></label>
+    <label class="bg-control">Paper <input id="bgColor" type="color" value="#ffffff"></label>
+    <button id="clearBtn" class="subtle">Clear layer</button>
+  </section>
+  <section class="panel layers-panel">
+    <div class="panel-title"><strong>Layers</strong><button id="addLayer" class="mini">＋ Add layer</button></div>
+    <div id="layers" class="layer-list"></div>
+  </section>
+  <section class="panel timeline-panel">
+    <div class="panel-title"><strong>Timeline</strong><div class="timeline-actions"><button id="playBtn" class="mini">▶ Play</button><button id="addFrame" class="mini">＋ Frame</button></div></div>
+    <div class="timeline-sub"><span id="frameLabel">Frame 1 of 1</span><label><input id="onion" type="checkbox"> Onion skin</label><label>FPS <select id="fps"><option>6</option><option selected>12</option><option>24</option></select></label></div>
+    <div id="frames" class="frame-list"></div>
+  </section>
+  <section class="export-row">
+    <button id="pngBtn" class="subtle">Export PNG</button>
+    <button id="projectBtn" class="subtle">Export project</button>
+    <label class="subtle import-label">Import project<input id="importProject" type="file" accept="application/json,.json"></label>
+  </section>
+  <p class="footnote">Your drawings are saved on this device. This first studio version supports frame-by-frame drawing and PNG/project export.</p>
+</main>
+<div id="dialog" class="dialog hidden" role="dialog" aria-modal="true">
+  <div class="dialog-card"><strong id="dialogTitle">Add text</strong><input id="dialogInput" type="text" maxlength="80" placeholder="Type your text"><div class="dialog-actions"><button id="dialogCancel" class="subtle">Cancel</button><button id="dialogOk" class="primary">Add</button></div></div>
+</div>
+<script src="./studio.js"></script>
+<script>
+if ('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw-ios.js').catch(()=>{}));
+</script>
+</body>
+</html>
