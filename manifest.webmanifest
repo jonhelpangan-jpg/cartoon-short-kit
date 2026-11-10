@@ -1,0 +1,20 @@
+{
+  "id": "./ios.html",
+  "name": "Cartoon Short Kit",
+  "short_name": "Cartoon Kit",
+  "description": "Play and preview vertical 2D cartoon shorts on your iPhone.",
+  "start_url": "./ios.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#151515",
+  "theme_color": "#151515",
+  "icons": [
+    {
+      "src": "./ios-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
