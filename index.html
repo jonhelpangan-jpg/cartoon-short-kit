@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cartoon Short Kit – Preview</title>
+<style>
+  :root{color-scheme:dark}
+  html,body{margin:0;height:100%;background:#151515;color:#eee;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  body{display:flex;flex-direction:column;align-items:center}
+  #stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;width:100%;padding:8px;box-sizing:border-box}
+  canvas{display:block;height:100%;max-height:100%;max-width:100%;aspect-ratio:9/16;object-fit:contain;background:#000;border-radius:8px}
+  #bar{width:100%;max-width:640px;padding:10px 14px 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:8px}
+  #row{display:flex;gap:8px;align-items:center}
+  button,label.btn{background:#2a2a2a;color:#eee;border:1px solid #444;border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer}
+  button:active,label.btn:active{background:#3a3a3a}
+  input[type=range]{flex:1}
+  #info{font-size:12px;opacity:.75;min-height:1.4em}
+  #errbox{color:#ff8a80;font-size:12px;white-space:pre-wrap}
+  input[type=file]{display:none}
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c" width="1080" height="1920"></canvas></div>
+<div id="bar">
+  <div id="row">
+    <button id="play" disabled>Loading…</button>
+    <input id="seek" type="range" min="0" value="0" step="1" disabled>
+    <span id="fr" style="font-size:12px;min-width:70px;text-align:right">0 / 0</span>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <label class="btn">Load voiceover (optional)<input id="aud" type="file" accept="audio/*"></label>
+    <span id="info">Starting the renderer…</span>
+  </div>
+  <div id="errbox"></div>
+</div>
+<script>
+window.addEventListener('error',e=>{window.err=String(e.message);document.getElementById('errbox').textContent='Error: '+e.message});
+window.addEventListener('unhandledrejection',e=>{document.getElementById('errbox').textContent='Error: '+(e.reason&&e.reason.message||e.reason)});
+</script>
+<script type="module" src="main.js"></script>
+<script type="module">
+const FPS=30, $=id=>document.getElementById(id);
+const play=$('play'), seek=$('seek'), fr=$('fr'), info=$('info'), aud=$('aud');
+let audio=null, playing=false, frame=0, t0=0, f0=0, total=0, busy=false, want=null;
+
+function draw(f){ // coalesce requests so slow machines never queue frames
+  want=f; if(busy) return; busy=true;
+  requestAnimationFrame(()=>{ const g=want; want=null;
+    try{ window.renderFrame(g); }catch(e){ $('errbox').textContent='Render error: '+e.message; playing=false; play.textContent='Play'; }
+    busy=false; if(want!==null && want!==g) draw(want); });
+}
+function show(f){ frame=Math.max(0,Math.min(total-1,Math.round(f))); seek.value=frame; fr.textContent=frame+' / '+(total-1); draw(frame); }
+
+function tick(now){
+  if(!playing) return;
+  let f = audio && !audio.paused ? audio.currentTime*FPS : f0 + (now-t0)/1000*FPS;
+  if(f>=total-1){ playing=false; play.textContent='Replay'; if(audio) audio.pause(); show(total-1); return; }
+  show(f); requestAnimationFrame(tick);
+}
+function start(){
+  if(frame>=total-1) frame=0;
+  f0=frame; t0=performance.now(); playing=true; play.textContent='Pause';
+  if(audio){ audio.currentTime=frame/FPS; audio.play().catch(()=>{}); }
+  requestAnimationFrame(tick);
+}
+function stop(){ playing=false; play.textContent='Play'; if(audio) audio.pause(); }
+
+play.onclick=()=> playing?stop():start();
+seek.oninput=()=>{ const was=playing; if(was) stop(); show(+seek.value); if(audio) audio.currentTime=frame/FPS; };
+aud.onchange=()=>{ const f=aud.files[0]; if(!f) return; if(audio) URL.revokeObjectURL(audio.src);
+  audio=new Audio(URL.createObjectURL(f)); info.textContent='Voiceover loaded: '+f.name; };
+
+(function wait(){
+  if(window.err){ info.textContent='Failed to start (see error below).'; return; }
+  if(!window.ready) return setTimeout(wait,100);
+  total=window.TOTAL; seek.max=total-1; seek.disabled=false; play.disabled=false; play.textContent='Play';
+  info.textContent='Ready: '+total+' frames ('+(total/FPS).toFixed(1)+' s). Playback may skip frames on slower devices.';
+  show(0);
+})();
+</script>
+</body>
+</html>
