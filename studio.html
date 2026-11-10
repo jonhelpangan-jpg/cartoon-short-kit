@@ -27,14 +27,14 @@
     </div>
   </section>
   <nav class="tools" aria-label="Drawing tools">
-    <button data-tool="select" class="tool active" title="Select">↖<small>Select</small></button>
+    <button data-tool="select" class="tool active" title="Select and move">↖<small>Select</small></button>
     <button data-tool="pen" class="tool" title="Pen">✎<small>Pen</small></button>
     <button data-tool="eraser" class="tool" title="Eraser">◩<small>Eraser</small></button>
     <button data-tool="line" class="tool" title="Line">／<small>Line</small></button>
     <button data-tool="rect" class="tool" title="Rectangle">□<small>Rect</small></button>
     <button data-tool="ellipse" class="tool" title="Ellipse">◯<small>Circle</small></button>
     <button data-tool="text" class="tool" title="Text">T<small>Text</small></button>
-    <button id="undoBtn" class="tool" title="Undo">↶<small>Undo</small></button>
+    <button id="undoBtn" class="tool" title="Undo">↶<small>Undo</small></button><button id="deleteBtn" class="tool" title="Delete selected">⌫<small>Delete</small></button>
   </nav>
   <section class="controls">
     <label class="color-control">Color <input id="color" type="color" value="#202431"></label>
@@ -51,12 +51,13 @@
     <div class="timeline-sub"><span id="frameLabel">Frame 1 of 1</span><label><input id="onion" type="checkbox"> Onion skin</label><label>FPS <select id="fps"><option>6</option><option selected>12</option><option>24</option></select></label></div>
     <div id="frames" class="frame-list"></div>
   </section>
-  <section class="export-row">
+  <section class="panel audio-panel"><div class="panel-title"><strong>Audio track</strong><span id="audioStatus">No audio loaded</span></div><div class="audio-controls"><label class="subtle import-label">Add music / voiceover<input id="audioFile" type="file" accept="audio/*"></label><label>Volume <input id="audioVolume" type="range" min="0" max="100" value="80"></label><button id="removeAudio" class="mini">Remove audio</button></div><audio id="audioPreview" controls preload="none"></audio></section>
+  <section class="export-row"><button id="videoBtn" class="primary">Export video</button>
     <button id="pngBtn" class="subtle">Export PNG</button>
     <button id="projectBtn" class="subtle">Export project</button>
     <label class="subtle import-label">Import project<input id="importProject" type="file" accept="application/json,.json"></label>
   </section>
-  <p class="footnote">Your drawings are saved on this device. This first studio version supports frame-by-frame drawing and PNG/project export.</p>
+  <p class="footnote">Create scenes frame by frame, move selected artwork, add a music or voiceover track, and export a video when your browser supports recording. Audio files must be re-added after reopening the project.</p>
 </main>
 <div id="dialog" class="dialog hidden" role="dialog" aria-modal="true">
   <div class="dialog-card"><strong id="dialogTitle">Add text</strong><input id="dialogInput" type="text" maxlength="80" placeholder="Type your text"><div class="dialog-actions"><button id="dialogCancel" class="subtle">Cancel</button><button id="dialogOk" class="primary">Add</button></div></div>
