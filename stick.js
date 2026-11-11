@@ -169,3 +169,19 @@ export const fxWind = (p, t) => {
   for (let i = 0; i < 7; i++) { const y = 180 + i * 110, x0 = ((t * 900 + i * 230) % 900) - 300, L = 120 + (i % 3) * 60;
     p.stroke([[x0, y], [x0 + L, y + 6]], 18, "#ffffff"); p.stroke([[x0 + 6, y + 1], [x0 + L - 6, y + 5]], 5, INK); }
 };
+
+/** frozen speech bubble with scribble words */
+export const fxSpeech = (p) => {
+  p.poly(ellPts(300, 420, 230, 150, 0, 360, 0, 48), "#ffffff", 9); p.poly([[200, 540], [150, 650], [260, 555]], "#ffffff", 0); p.stroke([[200, 548], [150, 650], [262, 560]], 9);
+  for (let k = 0; k < 3; k++) { const y = 360 + k * 60, pts = []; for (let i = 0; i <= 20; i++) pts.push([170 + i * 13 - k * 10, y + 7 * Math.sin(i * 1.3 + k)]); p.stroke(pts, 9, "#5a5a70"); }
+};
+export const fxBird = (p, up = 1) => {
+  p.poly([[160, 520], [300, 470], [450, 500], [470, 520], [440, 545], [300, 560]], "#4a4e5a", 8);
+  p.poly([[260, 500], [320 - 40 * up, 500 - 180 * up], [380, 500]], "#5a5e6c", 8);
+  p.dot(430, 510, 6, "#ffffff"); p.poly([[470, 515], [505, 522], [468, 530]], "#e8a040", 4);
+};
+export const fxBooks = (p, n = 8) => {
+  const cols = ["#d84a3a", "#3a7ad8", "#e8b030", "#3aa86a", "#8a4ad0", "#e87a3a", "#2a8a9a", "#c84a8a"];
+  for (let i = 0; i < n; i++) { const y = 975 - (i + 1) * 46, w = 150 + ((i * 37) % 40), x = 300 + ((i * 53) % 30) - 15;
+    p.poly([[x - w / 2, y], [x + w / 2, y], [x + w / 2, y + 44], [x - w / 2, y + 44]], cols[i % 8], 6); p.stroke([[x - w / 2 + 14, y + 22], [x + w / 2 - 14, y + 22]], 4, "#ffffff88"); }
+};
