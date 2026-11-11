@@ -120,3 +120,52 @@ export const figureFront = (p, key, opts = {}) => (STYLE.mode === "stick" ? stic
 export const drawFace3D = (g, expr = "neutral", look = 0, blink = 0, skin = SKIN) => {
   const p = new Pen(g); faceFront(p, 256, 240, 500, expr, 0, look, lidOf(blink), false, skin, null, false);
 };
+
+// ---------------- extra effects (hand, trophy, confetti, shards, wind) ----------------
+/** reaching arm entering from screen-right, open palm up at (300, 540) */
+export const fxHand = (p, sleeve = "#2f7fd0", skin = SKIN) => {
+  p.band([[640, 600], [470, 572], [352, 556]], sleeve, 64, 6, "butt");
+  p.band([[360, 556], [338, 552]], mix(sleeve, "#ffffff", 0.25), 66, 6, "butt");
+  const palm = [[250, 540], [262, 520], [300, 512], [338, 520], [348, 540], [330, 566], [270, 566]];
+  for (let i = 0; i < 4; i++) p.ell(236 + i * 2, 526 + i * 12, 22, 10, skin, 6);
+  p.poly(palm, skin, 7);
+  p.ell(300, 508, 12, 26, skin, 6, 0, 360, -0.6);
+  p.stroke([[276, 548], [320, 548]], 4, mul(skin, [0.8, 0.7, 0.7]));
+};
+/** gold trophy, base on the sole line (975) */
+export const fxTrophy = (p) => {
+  p.poly(rrect(220, 930, 380, 975, 8), "#6b4a2e", 8);
+  p.poly([[270, 930], [330, 930], [314, 860], [286, 860]], "#e6b23a", 8);
+  for (const s of [-1, 1]) p.stroke(ellPts(300 + s * 92, 760, 40, 44, s > 0 ? -90 : 90, s > 0 ? 90 : 270, 0, 20), 16);
+  for (const s of [-1, 1]) p.stroke(ellPts(300 + s * 92, 760, 40, 44, s > 0 ? -90 : 90, s > 0 ? 90 : 270, 0, 20), 9, "#f2c84a");
+  const cup = [[190, 690], [410, 690], [400, 760], [360, 840], [300, 868], [240, 840], [200, 760]];
+  p.poly(cup, "#f2c84a", 9);
+  p.stroke([[232, 712], [244, 790]], 12, "#fff3b8");
+  p.dot(300, 760, 20, "#fff3b8");
+};
+/** confetti layer: t = time in s, seed per layer. Pieces drift down and spin. */
+export const fxConfetti = (p, t, seed = 1) => {
+  const cols = ["#ff5a5a", "#ffd23a", "#4ad08a", "#4aa8ff", "#c86aff", "#ff9a3a"];
+  for (let i = 0; i < 46; i++) {
+    const r1 = Math.sin(i * 12.9898 + seed * 78.2) * 43758.5453, a = r1 - Math.floor(r1), r2 = Math.sin(i * 4.1 + seed * 9.7) * 9631.3, b = r2 - Math.floor(r2);
+    const y = ((b * 1000 + t * (180 + a * 120)) % 1100) - 80, x = a * 600 + Math.sin(t * 2 + i) * 24, rot = t * (3 + a * 4) + i, w = 12 + a * 8;
+    const pts = [[-w, -6], [w, -6], [w, 6], [-w, 6]].map(([px, py]) => [x + px * Math.cos(rot) - py * Math.sin(rot) * Math.abs(Math.cos(t * 5 + i)), y + px * Math.sin(rot) + py * Math.cos(rot)]);
+    p.poly(pts, cols[i % cols.length], 3);
+  }
+};
+/** shards bursting from the centre (300, 500), k 0..1 */
+export const fxShards = (p, k) => {
+  const g = p.g; g.save(); g.globalAlpha = Math.max(0, 1 - k * k);
+  for (let i = 0; i < 26; i++) {
+    const a = i * 2.39996, d = (60 + (i % 5) * 40) * (0.3 + k * 1.6), sz = 26 + (i % 4) * 12, rot = a + k * (4 + i % 3);
+    const x = 300 + Math.cos(a) * d * 0.9, y = 520 + Math.sin(a) * d * 1.3 + k * k * 180;
+    const pts = [[0, -sz], [sz * 0.7, sz * 0.4], [-sz * 0.5, sz * 0.6]].map(([px, py]) => [x + px * Math.cos(rot) - py * Math.sin(rot), y + px * Math.sin(rot) + py * Math.cos(rot)]);
+    p.poly(pts, "#e9feff", 5);
+  }
+  g.restore();
+};
+/** wind / speed lines, t 0..1 phase */
+export const fxWind = (p, t) => {
+  for (let i = 0; i < 7; i++) { const y = 180 + i * 110, x0 = ((t * 900 + i * 230) % 900) - 300, L = 120 + (i % 3) * 60;
+    p.stroke([[x0, y], [x0 + L, y + 6]], 18, "#ffffff"); p.stroke([[x0 + 6, y + 1], [x0 + L - 6, y + 5]], 5, INK); }
+};
