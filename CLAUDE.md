@@ -1,6 +1,6 @@
 # cartoon-short-kit: house rules for making videos
 
-- **Original files stay untouched.** The house style lives only in separate files: `stick.js` (2D characters + face painter), `rig3d.js` (3D characters),
+- **Original files stay untouched.** The house style lives only in separate files: `stick.js` (2D characters + face painter), `rig3d.js` (3D characters), `scenes.js` (location library),
   `framing.js` (camera framings) and `tools/captions.py` (captions). Never edit `main.js`, `motion.js`, `roman.js`,
   `paint.js` or `toon.js` in this repo for style changes.
 - **Character style:** every new video uses the "stick" style (big round white heads, pill-shaped bodies,
@@ -24,3 +24,12 @@
   - Bright, sunny, saturated daylight by default (sat about 1.15-1.2, warm sun, soft shadows); switch light only for story beats.
   - Lively characters: idle sway and blinks always, an expression change or pose on every stressed word, anticipation and
     overshoot on actions. Prefer a cut or whip to a new close framing every 1-3 s over long slow wide moves.
+- **A different world for every story (house rule):**
+  - Build each story's locations to fit it. Start from `scenes.js` (beach, school, forest, subway, desert, space,
+    market, snow) and add new scenes to that library whenever a story needs a new place, so it keeps growing.
+  - Never use the same main location as either of the last two videos (the old town street included). Give each
+    story its own palette and time of day (`SCENE_LIGHTS` has a starting preset per scene).
+- **Camera variety (house rule):** every short uses at least 6-8 different setups from `framing.js`: close-ups, over-the-shoulder
+  (`overShoulder`), top-down (`topDown`), worm's-eye (`worm`), tilted (`dutch`), point of view (`pov`), through a foreground
+  object (`through`), tracking (`track`), inserts on hands/objects, and one dolly zoom (`dollyZoom`) on the biggest surprise.
+  Put the shot type in work/PLAN.md and run `checkVariety()` before the full render: no two neighbouring shots may share a type.

@@ -5,7 +5,8 @@ The original kit files are unchanged. The house style is three add-on files:
 | File | What it does |
 |---|---|
 | `stick.js` | "Stick" characters: big round white heads, pill-shaped bodies, thin stick arms and legs, dark mitten hands. Adds a modern cast (`hero`, `pj`, `rain`, townsfolk) and `figureFront()`. |
-| `framing.js` | `frame(eye, kind, dir)` gives close, long-lens framings (`cu`, `mcu`, `ms`, `full`, `two`) with a recommended background blur. |
+| `scenes.js` | Location library: `buildScene(name, scene, origin)` builds a complete 3D place (beach, school, forest, subway, desert, space, market, snow) with its own textures, props, `SCENE_LIGHTS` preset, animated details (`tick(f)`: waves, train lights, snowfall) and named `spots`. |
+| `framing.js` | `frame(eye, kind, dir)` close framings, plus a shot grammar: `overShoulder`, `topDown`, `worm`, `dutch`, `pov`, `through`, `track`, `dollyZoom`, and `checkVariety(plan)` to catch repeated neighbouring shot types. |
 | `rig3d.js` | **Fully 3D characters** (`Char3D`): sphere head with a painted-on face (all the kit's expressions, blinks and `look`), capsule body with shirt/pants, jointed tube arms and legs (2-bone IK, walk cycles), mitten hands, 3D hair, hats, glasses and moustaches. Pose options match the 2D cards (`expr`, `L`/`R` arm poses, `tilt`, `headTilt`, `step`, ...). Needs `drawFace3D` from `stick.js`. |
 | `tools/captions.py` | Captions. Default: the original phrase style (1-3 words, bold uppercase, spoken word in yellow), split automatically. `CAP_STYLE=word`: one word at a time with a pop-in. |
 
@@ -50,3 +51,12 @@ function drawActors(all, cam) {
    Outfits live in `OUTFITS3D` (`skin`, `shirt`, `pants`, `stripes`, `coat`, `hair`, `hairStyle` (`bun`, `curls`),
    `hat` (`beanie`), `hatColor`, `glasses`, `moustache`, `detail` (`collar`, `buttons`, `tie`), `apron`, `shoes`).
    `EYE_Y` gives the eye height for camera framing.
+
+## Locations (scenes.js)
+
+```js
+import { buildScene, SCENE_LIGHTS } from './scenes.js';
+const beach = buildScene('beach', scene, [3000, 0, 0]);   // build far from other sets; each scene has its own ground
+// per frame (e.g. in worldState): beach.tick(f);   story lights: LIGHTS.beach = SCENE_LIGHTS.beach
+// characters/cameras: beach.spots.a, beach.spots.b, beach.spots.view = { pos, look }
+```
