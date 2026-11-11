@@ -12,9 +12,10 @@
   far in the background or when asked. Light scenes warm and soft, with angled cameras so the 3D sets read as 3D.
 - Design each video's characters to fit its story (outfits, hair, hats, props), and send a character sheet before the full render.
 - Never copy another creator's character attire or designs; keep outfits original.
-- **Captions (house style):** always make a captioned version too: ONE word at a time, Title Case, heavy white
-  letters with a thick black outline and a quick pop-in, centred low in the frame. Use `tools/captions.py`
-  (copy it into the project; it reads `work/words.json` and writes `frames_cap/`).
+- **Captions (house style):** always make a captioned version too, in the original phrase style: short phrases of
+  1-3 words in bold UPPERCASE, white with a dark outline, the spoken word highlighted in yellow, low in the frame.
+  Use `tools/captions.py` (copy it into the project; it reads `work/words.json`, splits phrases automatically and
+  writes `frames_cap/`). `CAP_STYLE=word` gives the one-word-at-a-time style instead.
 - **Camera & animation (house style):**
   - Characters fill the frame: mostly medium close-ups and medium shots (`frame()` in `framing.js`, kinds `cu`, `mcu`, `ms`,
     `two`), with a camera at or slightly below eye level and a long lens (fov 26-32) so the background compresses.

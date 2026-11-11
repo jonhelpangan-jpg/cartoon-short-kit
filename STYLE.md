@@ -7,7 +7,7 @@ The original kit files are unchanged. The house style is three add-on files:
 | `stick.js` | "Stick" characters: big round white heads, pill-shaped bodies, thin stick arms and legs, dark mitten hands. Adds a modern cast (`hero`, `pj`, `rain`, townsfolk) and `figureFront()`. |
 | `framing.js` | `frame(eye, kind, dir)` gives close, long-lens framings (`cu`, `mcu`, `ms`, `full`, `two`) with a recommended background blur. |
 | `rig3d.js` | **Fully 3D characters** (`Char3D`): sphere head with a painted-on face (all the kit's expressions, blinks and `look`), capsule body with shirt/pants, jointed tube arms and legs (2-bone IK, walk cycles), mitten hands, 3D hair, hats, glasses and moustaches. Pose options match the 2D cards (`expr`, `L`/`R` arm poses, `tilt`, `headTilt`, `step`, ...). Needs `drawFace3D` from `stick.js`. |
-| `tools/captions.py` | Captions one word at a time, Title Case, heavy white letters with a thick black outline and a pop-in. |
+| `tools/captions.py` | Captions. Default: the original phrase style (1-3 words, bold uppercase, spoken word in yellow), split automatically. `CAP_STYLE=word`: one word at a time with a pop-in. |
 
 ## Using it in a project
 
