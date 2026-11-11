@@ -23,13 +23,13 @@ You can also load a voiceover file to play alongside it. Rendering is heavy, so 
 
 `roman.js` draws characters in one of two styles, chosen with `STYLE.mode` (set it right after importing `toon.js`):
 
-- `"bean"` (default): bean-shaped heads with skin tones, used by the Roman example.
-- `"stick"`: big round white heads, pill-shaped bodies, thin stick arms and legs and dark mitten hands.
+- `"stick"` (default, the house style for all new videos): big round white heads, pill-shaped bodies, thin stick arms and legs and dark mitten hands.
   Hair (`hair`, `curls`, `hairStyle`), caps, outfit colours and `detail` (`buttons`, `stripes`, `pocket`) tell characters apart.
+- `"bean"`: the original bean-shaped heads with skin tones. The Roman example (`main.js`) sets this explicitly.
 
 ```js
 import * as T from './toon.js';
-T.STYLE.mode = 'stick';
+T.STYLE.mode = 'stick'; // already the default
 ```
 
 Both styles take the same `romanFront(p, outfitKey, opts)` options (expression, arm poses, `facing`, `look`, `tilt`, `step` and so on).

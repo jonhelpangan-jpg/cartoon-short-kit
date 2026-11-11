@@ -1,5 +1,6 @@
 import * as THREE from './lib/three.module.js';
 import * as T from './toon.js';
+T.STYLE.mode = 'bean'; // the Roman example keeps its original bean-head look
 import * as P from './paint.js';
 import { SHOTS, TOTAL, shotAt, camAt, dofAt, LIGHTS, lightFor, actorsAt, worldAt, fxAt } from './story.js';
 

@@ -268,7 +268,7 @@ export const fxWood = (p, seed) => { p.poly([[200, 420], [400, 400], [420, 560],
 export const headCenter = (seed = 3) => { const H = headBlob(seed, 118, 0), HH = 2 * H.b; return 975 - 1.38 * HH - 1.08 * HH - H.b; };
 
 // ---------------- "stick" style: big round white head, pill body, stick limbs, dark mitt hands (our own design) ----------------
-export const STYLE = { mode: "bean" };
+export const STYLE = { mode: "stick" };   // house style for all new videos; "bean" = original bean heads
 const SINK = "#2b2533", HEADW = "#fbfbf9";
 export const stickFront = (p, key, opts = {}) => {
   const O = typeof key === "string" ? OUTFITS[key] : key;
