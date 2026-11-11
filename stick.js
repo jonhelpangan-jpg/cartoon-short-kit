@@ -115,3 +115,8 @@ export const stickFront = (p, key, opts = {}) => {
 
 /** draw a character in the current STYLE (stick by default, "bean" falls back to the original romanFront) */
 export const figureFront = (p, key, opts = {}) => (STYLE.mode === "stick" ? stickFront(p, key, opts) : romanFront(p, key, opts));
+
+/** paint a face (eyes, brows, mouth) on a 512x512 canvas for the 3D characters (rig3d.js); transparent background */
+export const drawFace3D = (g, expr = "neutral", look = 0, blink = 0, skin = SKIN) => {
+  const p = new Pen(g); faceFront(p, 256, 240, 500, expr, 0, look, lidOf(blink), false, skin, null, false);
+};
