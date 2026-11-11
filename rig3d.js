@@ -20,6 +20,9 @@ export const OUTFITS3D = {
   rain: { skin: '#f3cfae', shirt: '#f2c230', pants: '#f2c230', hair: '#c8452a', hairStyle: 'curls', detail: 'buttons', shoes: '#2f6fb0', coat: true },
   sprinter: { skin: '#c98a5e', shirt: '#e8423a', stripes: '#ffffff', stripeCount: 1, pants: '#e8423a', hair: '#24180f', hairStyle: 'spiky', headband: '#ffffff', detail: 'zip', shoes: '#f4f1ea', sleeves: '#e8423a' },
   ranger: { skin: '#e8c09a', shirt: '#6a7a4a', pants: '#3a3a30', hair: '#6a4a30', earDefenders: '#f2a23a', glasses: 'safety', detail: 'buttons', shoes: '#2b2533' },
+  mind: { skin: '#e0b08a', shirt: '#3f8a5a', pants: '#2a3348', hair: '#3b2a20', glasses: true, detail: 'hood', shoes: '#2b2533' },
+  friend: { skin: '#8a5a3c', shirt: '#e8e4dc', stripes: '#3a6ab0', pants: '#4a4a58', hat: 'beanie', hatColor: '#e0a030', shoes: '#f4f1ea' },
+  cowork: { skin: '#f0caa8', shirt: '#d8e4f0', pants: '#3a3f4a', hair: '#c89a5a', detail: 'tie', tie: '#3a5aa8', shoes: '#1a1820' },
   fz1: { skin: '#e8cdb4', shirt: '#6f7f98', pants: '#3a3f4a', hair: '#4a3a30', detail: 'collar' },
   fz2: { skin: '#c99a78', shirt: '#8f7f70', pants: '#3a3430', hat: 'cap', hatColor: '#5a6070' },
   fz3: { skin: '#f0d0b8', shirt: '#6a7a6a', pants: '#3a4038', hair: '#8a8070', detail: 'buttons' },
@@ -56,6 +59,8 @@ export class Char3D {
     if (o.detail === 'buttons') for (let i = 0; i < 3; i++) { const y = bodyTopY - 0.12 - i * 0.1; add(new THREE.SphereGeometry(0.014, 8, 6), mat('#3a2a24'), this.upper, 0, y, front(y) + 0.004); }
     if (o.detail === 'collar' || o.detail === 'tie' || o.detail === 'buttons') for (const s of [-1, 1]) { const cl = add(new THREE.ConeGeometry(0.055, 0.09, 3), mat(o.detail === 'tie' ? '#f4f1ea' : o.shirt), this.upper, s * 0.05, bodyTopY - 0.07, front(bodyTopY - 0.07) - 0.01); cl.rotation.set(Math.PI, 0, s * 0.5); cl.scale.z = 0.4; }
     if (o.detail === 'tie') { const y = bodyTopY - 0.17; const tie = add(new THREE.ConeGeometry(0.04, 0.2, 4), mat(o.tie), this.upper, 0, y, front(y) + 0.01); tie.rotation.x = Math.PI; tie.scale.z = 0.3; }
+    if (o.detail === 'hood') { const hd = add(new THREE.TorusGeometry(0.15, 0.05, 10, 24), mat(o.shirt), this.upper, 0, bodyTopY - 0.02, -0.08); hd.rotation.x = Math.PI / 2 - 0.4; hd.scale.set(1.1, 1, 0.7);
+      for (const s2 of [-1, 1]) add(new THREE.CylinderGeometry(0.006, 0.006, 0.14, 6), mat('#f4f1ea'), this.upper, s2 * 0.04, bodyTopY - 0.12, front(bodyTopY - 0.12) + 0.008); }
     if (o.detail === 'zip') { const y = bodyTopY - 0.2; add(new THREE.BoxGeometry(0.012, 0.32, 0.01), mat('#d8d8d8'), this.upper, 0, y, front(y) + 0.004); }
     if (o.detail === 'bowtie') for (const s2 of [-1, 1]) { const y = bodyTopY - 0.06; const b = add(new THREE.ConeGeometry(0.035, 0.06, 4), mat('#c83a3a'), this.upper, s2 * 0.028, y, front(y) + 0.012); b.rotation.z = s2 * Math.PI / 2; b.scale.z = 0.5; }
     this.medal = new THREE.Group(); this.medal.visible = false; this.upper.add(this.medal);
@@ -121,10 +126,10 @@ export class Char3D {
     const perp = P.clone().addScaledVector(dir, -P.dot(dir)).normalize();
     return [S.clone().addScaledVector(dir, x).addScaledVector(perp, h), t];
   }
-  drawFace(expr, blink, look) {
-    const key = `${expr}|${blink}|${look}`; if (key === this.faceKey) return; this.faceKey = key;
+  drawFace(expr, blink, look, glow = 0) {
+    const key = `${expr}|${blink}|${look}|${glow}`; if (key === this.faceKey) return; this.faceKey = key;
     const g = this.faceC.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, 512, 512);
-    this.T.drawFace3D(g, expr, look, blink, this.o.skin); this.faceT.needsUpdate = true;
+    this.T.drawFace3D(g, expr, look, blink, this.o.skin, glow); this.faceT.needsUpdate = true;
   }
   /** hand target (shoulder space: +x = character's left when facing the camera / screen right, +y up, +z forward) */
   handTarget(pose, s, o) {
@@ -160,7 +165,7 @@ export class Char3D {
     this.neck.scale.set(1 + squash * 0.22, 1 - squash * 0.16, 1 - squash * 0.1);
     this.upper.rotation.set((lean + crouch * 35) * Math.PI / 180, 0, -tilt * Math.PI / 180);
     this.neck.rotation.set(0, headYaw + (o.facing || 0) * 0.35, -headTilt * Math.PI / 180);
-    this.drawFace(expr, blink, look);
+    this.drawFace(expr, blink, look, o.glow || 0);
     // arms
     for (const A of this.arms) {
       const S = new THREE.Vector3(A.s * (D.bodyR * 1.0), D.top - D.hip - 0.13, 0);

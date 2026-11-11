@@ -117,8 +117,10 @@ export const stickFront = (p, key, opts = {}) => {
 export const figureFront = (p, key, opts = {}) => (STYLE.mode === "stick" ? stickFront(p, key, opts) : romanFront(p, key, opts));
 
 /** paint a face (eyes, brows, mouth) on a 512x512 canvas for the 3D characters (rig3d.js); transparent background */
-export const drawFace3D = (g, expr = "neutral", look = 0, blink = 0, skin = SKIN) => {
+export const drawFace3D = (g, expr = "neutral", look = 0, blink = 0, skin = SKIN, glow = 0, glowCol = "190,120,255") => {
   const p = new Pen(g); faceFront(p, 256, 240, 500, expr, 0, look, lidOf(blink), false, skin, null, false);
+  if (glow > 0) { const u = 5; for (const s of [-1, 1]) { const x = 256 + s * 13 * u;   // glowing eyes
+      p.ell(x, 240, 17 * u, 15 * u, `rgba(${glowCol},${(0.4 * glow).toFixed(3)})`, 0); p.ell(x, 240, 9 * u, 8.5 * u, `rgba(${glowCol},${glow.toFixed(3)})`, 0); p.ell(x, 240, 4 * u, 4 * u, `rgba(255,255,255,${glow.toFixed(3)})`, 0); } }
 };
 
 // ---------------- extra effects (hand, trophy, confetti, shards, wind) ----------------
@@ -184,4 +186,33 @@ export const fxBooks = (p, n = 8) => {
   const cols = ["#d84a3a", "#3a7ad8", "#e8b030", "#3aa86a", "#8a4ad0", "#e87a3a", "#2a8a9a", "#c84a8a"];
   for (let i = 0; i < n; i++) { const y = 975 - (i + 1) * 46, w = 150 + ((i * 37) % 40), x = 300 + ((i * 53) % 30) - 15;
     p.poly([[x - w / 2, y], [x + w / 2, y], [x + w / 2, y + 44], [x - w / 2, y + 44]], cols[i % 8], 6); p.stroke([[x - w / 2 + 14, y + 22], [x + w / 2 - 14, y + 22]], 4, "#ffffff88"); }
+};
+
+/** thought bubble with an icon (no words). icon: heart | star | sandwich | storm | trophyX | devil | grump | brokenheart. dark = the purple "dark thought" look */
+export const fxThought = (p, icon = "heart", dark = false, k = 1) => {
+  const g = p.g; g.save(); g.globalAlpha = Math.max(0, Math.min(1, k));
+  const fill = dark ? "#3a2156" : "#ffffff", ol = dark ? "#c89bff" : INK;
+  if (dark) { g.shadowColor = "rgba(190,120,255,0.9)"; g.shadowBlur = 40; }
+  const blobs = [[300, 380, 200, 150], [180, 330, 90, 80], [420, 320, 100, 90], [300, 270, 120, 90], [200, 450, 80, 60], [410, 450, 90, 65]];
+  for (const [x, y, rx, ry] of blobs) p.ell(x, y, rx, ry, ol, 0);
+  g.shadowBlur = 0;
+  for (const [x, y, rx, ry] of blobs) p.ell(x, y, rx - 10, ry - 10, fill, 0);
+  p.ell(250, 610, 34, 28, fill, 8); p.ell(225, 690, 20, 17, fill, 6);
+  if (dark) { p.ell(250, 610, 34, 28, null, 0); }
+  const c = 300, cy = 370;
+  switch (icon) {
+    case "heart": p.poly([[c, cy + 90], [c - 110, cy - 10], [c - 70, cy - 80], [c, cy - 40], [c + 70, cy - 80], [c + 110, cy - 10]], "#ff5a7a", 9); break;
+    case "star": { const pts = []; for (let i = 0; i < 10; i++) { const r = i % 2 ? 45 : 110, a = i * Math.PI / 5 - Math.PI / 2; pts.push([c + Math.cos(a) * r, cy + 10 + Math.sin(a) * r]); } p.poly(pts, "#ffd23a", 9); break; }
+    case "sandwich": p.poly([[c - 120, cy + 30], [c + 120, cy + 30], [c + 100, cy + 70], [c - 100, cy + 70]], "#e8b860", 8); p.poly([[c - 125, cy], [c + 125, cy], [c + 125, cy + 28], [c - 125, cy + 28]], "#6ac05a", 6); p.poly([[c - 120, cy - 60], [c + 120, cy - 60], [c + 110, cy - 2], [c - 110, cy - 2]], "#e8b860", 8); break;
+    case "storm": p.ell(c - 50, cy - 20, 80, 55, "#6a6a80", 8); p.ell(c + 40, cy - 35, 90, 65, "#6a6a80", 8); p.ell(c, cy + 10, 120, 50, "#6a6a80", 8);
+      p.poly([[c - 10, cy + 40], [c + 40, cy + 40], [c + 10, cy + 85], [c + 45, cy + 85], [c - 30, cy + 150], [c - 5, cy + 95], [c - 35, cy + 95]], "#ffd23a", 7); break;
+    case "trophyX": p.poly([[c - 80, cy - 70], [c + 80, cy - 70], [c + 60, cy + 10], [c, cy + 40], [c - 60, cy + 10]], "#f0bf3a", 8); p.poly([[c - 50, cy + 80], [c + 50, cy + 80], [c + 50, cy + 100], [c - 50, cy + 100]], "#8a5a34", 7);
+      p.stroke([[c - 120, cy - 110], [c + 120, cy + 120]], 26, "#e83a3a"); p.stroke([[c + 120, cy - 110], [c - 120, cy + 120]], 26, "#e83a3a"); break;
+    case "devil": p.ell(c, cy + 10, 95, 90, "#d83a4a", 9); p.poly([[c - 80, cy - 40], [c - 110, cy - 130], [c - 40, cy - 70]], "#d83a4a", 8); p.poly([[c + 80, cy - 40], [c + 110, cy - 130], [c + 40, cy - 70]], "#d83a4a", 8);
+      p.poly([[c - 55, cy - 10], [c - 15, cy + 5], [c - 55, cy + 15]], INK, 0); p.poly([[c + 55, cy - 10], [c + 15, cy + 5], [c + 55, cy + 15]], INK, 0); p.stroke([[c - 50, cy + 45], [c, cy + 65], [c + 50, cy + 45]], 10); break;
+    case "grump": p.ell(c, cy + 10, 95, 90, "#8a8aa8", 9); for (const s of [-1, 1]) { p.stroke([[c + s * 70, cy - 40], [c + s * 20, cy - 15]], 12); p.dot(c + s * 38, cy + 5, 12); } p.stroke([[c - 45, cy + 60], [c, cy + 42], [c + 45, cy + 60]], 10); break;
+    case "brokenheart": p.poly([[c, cy + 90], [c - 110, cy - 10], [c - 70, cy - 80], [c - 10, cy - 40], [c - 30, cy], [c + 10, cy + 30], [c - 10, cy + 70]], "#a83a5a", 9);
+      p.poly([[c + 20, cy + 85], [c + 10, cy + 40], [c + 30, cy - 5], [c + 10, cy - 40], [c + 70, cy - 80], [c + 115, cy - 10]], "#a83a5a", 9); break;
+  }
+  g.restore();
 };
