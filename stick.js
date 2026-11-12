@@ -216,3 +216,10 @@ export const fxThought = (p, icon = "heart", dark = false, k = 1) => {
   }
   g.restore();
 };
+
+/** door peephole mask: black frame with a round hole and a slight glass rim (centre 300,500) */
+export const fxPeephole = (p) => {
+  const g = p.g; g.save(); g.fillStyle = '#050407'; g.beginPath(); g.rect(-400, -600, 1400, 2200); g.arc(300, 500, 235, 0, Math.PI * 2, true); g.fill('evenodd');
+  const gr = g.createRadialGradient(300, 500, 150, 300, 500, 240); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(0.8, 'rgba(0,0,0,.25)'); gr.addColorStop(1, 'rgba(0,0,0,.85)');
+  g.fillStyle = gr; g.beginPath(); g.arc(300, 500, 240, 0, 7); g.fill(); g.restore();
+};

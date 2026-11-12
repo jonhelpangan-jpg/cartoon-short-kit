@@ -20,6 +20,10 @@ export const OUTFITS3D = {
   rain: { skin: '#f3cfae', shirt: '#f2c230', pants: '#f2c230', hair: '#c8452a', hairStyle: 'curls', detail: 'buttons', shoes: '#2f6fb0', coat: true },
   sprinter: { skin: '#c98a5e', shirt: '#e8423a', stripes: '#ffffff', stripeCount: 1, pants: '#e8423a', hair: '#24180f', hairStyle: 'spiky', headband: '#ffffff', detail: 'zip', shoes: '#f4f1ea', sleeves: '#e8423a' },
   ranger: { skin: '#e8c09a', shirt: '#6a7a4a', pants: '#3a3a30', hair: '#6a4a30', earDefenders: '#f2a23a', glasses: 'safety', detail: 'buttons', shoes: '#2b2533' },
+  trav: { skin: '#c8946a', shirt: '#d8a23a', pants: '#3a5a8a', hair: '#2a1e18', hairStyle: 'curls', detail: 'collar', shoes: '#f4f1ea' },
+  oldme: { skin: '#e2b896', shirt: '#d8a23a', pants: '#3a4a6a', hair: '#f4f1ea', hairStyle: 'sides', moustache: '#f4f1ea', glasses: true, detail: 'collar', shoes: '#5a4030' },
+  sci1: { skin: '#e8c4a0', shirt: '#f4f4f0', pants: '#f4f4f0', coat: true, hair: '#2a2220', glasses: 'shades', detail: 'buttons', shoes: '#1a1820' },
+  sci2: { skin: '#9a6a48', shirt: '#f4f4f0', pants: '#f4f4f0', coat: true, hair: '#1a1614', hairStyle: 'bun', glasses: 'shades', detail: 'buttons', shoes: '#1a1820' },
   mind: { skin: '#e0b08a', shirt: '#3f8a5a', pants: '#2a3348', hair: '#3b2a20', glasses: true, detail: 'hood', shoes: '#2b2533' },
   friend: { skin: '#8a5a3c', shirt: '#e8e4dc', stripes: '#3a6ab0', pants: '#4a4a58', hat: 'beanie', hatColor: '#e0a030', shoes: '#f4f1ea' },
   cowork: { skin: '#f0caa8', shirt: '#d8e4f0', pants: '#3a3f4a', hair: '#c89a5a', detail: 'tie', tie: '#3a5aa8', shoes: '#1a1820' },
@@ -80,7 +84,8 @@ export class Char3D {
     this.faceKey = '';
     // hair / hats / glasses
     const hairM = mat(o.hair || '#3b2a20');
-    if (o.hair && o.hairStyle !== 'curls' && o.hairStyle !== 'none') { const cap = add(new THREE.SphereGeometry(D.headR * 1.035, 36, 20, 0, Math.PI * 2, 0, 1.25), hairM, this.neck, 0, hy, 0); cap.rotation.x = -0.42; }
+    if (o.hair && o.hairStyle !== 'curls' && o.hairStyle !== 'none' && o.hairStyle !== 'sides') { const cap = add(new THREE.SphereGeometry(D.headR * 1.035, 36, 20, 0, Math.PI * 2, 0, 1.25), hairM, this.neck, 0, hy, 0); cap.rotation.x = -0.42; }
+    if (o.hairStyle === 'sides') for (const s2 of [-1, 1]) { const t = add(new THREE.SphereGeometry(0.1, 14, 10), hairM, this.neck, s2 * D.headR * 0.92, hy + 0.02, -0.06); t.scale.set(0.7, 1.1, 1.3); }
     if (o.hairStyle === 'bun') add(new THREE.SphereGeometry(0.09, 20, 14), hairM, this.neck, 0, hy + D.headR * 0.95, -0.08);
     if (o.hairStyle === 'curls') { for (let i = 0; i < 26; i++) { const th = 0.15 + (i % 13) / 12 * 1.15, ph = (i < 13 ? 0 : 0.24) + (i % 13) * 0.48 + Math.PI * 0.95; const r = D.headR * 1.0;
         const x = r * Math.sin(th) * Math.cos(ph), y = r * Math.cos(th) * 0.95, z = r * Math.sin(th) * Math.sin(ph); if (z > 0.11 && y < 0.2) continue; add(new THREE.SphereGeometry(0.07, 14, 10), hairM, this.neck, x, hy + y, z); }
@@ -95,7 +100,9 @@ export class Char3D {
     if (o.hairStyle === 'spiky') { for (let i = 0; i < 9; i++) { const a = -1.2 + i * 0.3, sp = add(new THREE.ConeGeometry(0.06, 0.16, 6), hairM, this.neck, Math.sin(a) * 0.16, hy + D.headR * 0.86 + Math.cos(a * 1.4) * 0.02, -0.04 - Math.abs(a) * 0.03); sp.rotation.set(-0.5, 0, -a * 0.6); } }
     if (o.hat === 'cap') { const cm = mat(o.hatColor || '#5a6070'); const c = add(new THREE.SphereGeometry(D.headR * 1.05, 32, 16, 0, Math.PI * 2, 0, 1.25), cm, this.neck, 0, hy, 0); c.rotation.x = -0.2;
       const br = add(new THREE.CylinderGeometry(0.17, 0.17, 0.02, 24, 1, false, 0, Math.PI), cm, this.neck, 0, hy + 0.1, D.headR * 0.78); br.rotation.y = Math.PI / 2; br.scale.set(1, 1, 0.75); }
-    if (o.glasses && o.glasses !== 'safety') { for (const s of [-1, 1]) { const g = add(new THREE.TorusGeometry(0.05, 0.007, 8, 28), mat('#2b2533'), this.neck, s * 0.068, hy + 0.022, D.headR * 0.975); g.rotation.y = s * 0.26; }
+    if (o.glasses === 'shades') { for (const s2 of [-1, 1]) { const g = add(new THREE.CylinderGeometry(0.052, 0.052, 0.012, 24), mat('#141218'), this.neck, s2 * 0.068, hy + 0.022, D.headR * 0.97); g.rotation.set(Math.PI / 2, 0, 0); g.rotation.y = s2 * 0.26; }
+      add(new THREE.CylinderGeometry(0.005, 0.005, 0.04, 6), mat('#141218'), this.neck, 0, hy + 0.03, D.headR * 1.0).rotation.z = Math.PI / 2; }
+    if (o.glasses && o.glasses !== 'safety' && o.glasses !== 'shades') { for (const s of [-1, 1]) { const g = add(new THREE.TorusGeometry(0.05, 0.007, 8, 28), mat('#2b2533'), this.neck, s * 0.068, hy + 0.022, D.headR * 0.975); g.rotation.y = s * 0.26; }
       add(new THREE.CylinderGeometry(0.005, 0.005, 0.04, 6), mat('#2b2533'), this.neck, 0, hy + 0.03, D.headR * 1.0).rotation.z = Math.PI / 2; }
     if (o.moustache) for (const s of [-1, 1]) { const m = add(new THREE.SphereGeometry(0.045, 14, 10), mat(o.moustache), this.neck, s * 0.04, hy - 0.06, D.headR * 0.93); m.scale.set(1.3, 0.55, 0.6); m.rotation.z = s * -0.25; }
     // limbs (tubes placed between joints every frame) + mitten hands + shoes
@@ -150,6 +157,7 @@ export class Char3D {
       case 'punch': return [-s * 0.02, 0.06, 0.44];
       case 'hold': return [s * 0.02, -0.06, 0.28];
       case 'umb': return [s * 0.1, -0.12, 0.2];
+      case 'selfie': return [s * 0.05, 0.2, 0.33];
       case 'pocket': return [s * 0.02, -0.3, 0.1];
       case 'run': { const k = s < 0 ? (o.swL || 0) : (o.swR || 0); return [s * 0.04, -0.12 + 0.1 * k, 0.26 * k]; }
       case 'swing': { const k = s < 0 ? (o.swL || 0) : (o.swR || 0); return [s * 0.05, -0.36 + 0.06 * Math.abs(k), 0.2 * k]; }
