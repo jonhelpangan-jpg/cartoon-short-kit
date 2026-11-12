@@ -6,7 +6,11 @@
 import * as THREE from './lib/three.module.js';
 
 const grad3 = (() => { const n = 16, d = new Uint8Array(n * 4); for (let i = 0; i < n; i++) { const t = i / (n - 1), v = Math.round(255 * (0.5 + 0.5 * Math.pow(t, 0.8))); d.set([v, v, v, 255], i * 4); } const t = new THREE.DataTexture(d, n, 1); t.minFilter = t.magFilter = THREE.LinearFilter; t.needsUpdate = true; return t; })();
-const mat = (color, extra = {}) => new THREE.MeshToonMaterial({ gradientMap: grad3, color, ...extra });
+// LOOK: house default is a 2D cartoon look on 3D rigs ("2D look, 3D motion"): flat colour with one hard shadow tone and
+// bean-shaped heads. Set LOOK.flat = false / LOOK.bean = false before creating characters for smooth 3D shading / round heads.
+export const LOOK = { flat: true, bean: true };
+const gradFlat = (() => { const d = new Uint8Array([150, 150, 150, 255, 255, 255, 255, 255]); const t = new THREE.DataTexture(d, 2, 1); t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true; return t; })();
+const mat = (color, extra = {}) => new THREE.MeshToonMaterial({ gradientMap: LOOK.flat ? gradFlat : grad3, color, ...extra });
 const Y = new THREE.Vector3(0, 1, 0), tv = new THREE.Vector3(), tq = new THREE.Quaternion();
 const D = { hip: 0.5, bodyR: 0.19, bodyLen: 0.24, headR: 0.265, arm: 0.215, leg: 0.255, limbR: 0.026, legR: 0.03, handR: 0.048 };
 D.bodyMid = D.hip + D.bodyR + D.bodyLen / 2 - 0.05; D.top = D.bodyMid + D.bodyLen / 2 + D.bodyR; D.headY = D.top + D.headR * 0.78;
@@ -170,7 +174,7 @@ export class Char3D {
     const ph = step * Math.PI * 2, walking = !!step;
     this.upper.position.y = D.hip + bob + (walking ? 0.02 * Math.abs(Math.sin(ph)) : 0) - sit * (D.hip - 0.2) - crouch * 0.22;
     this.medal.visible = !!medal;
-    this.neck.scale.set(1 + squash * 0.22, 1 - squash * 0.16, 1 - squash * 0.1);
+    const B = LOOK.bean ? [0.94, 1.12, 0.94] : [1, 1, 1]; this.neck.scale.set(B[0] * (1 + squash * 0.22), B[1] * (1 - squash * 0.16), B[2] * (1 - squash * 0.1));
     this.upper.rotation.set((lean + crouch * 35) * Math.PI / 180, 0, -tilt * Math.PI / 180);
     this.neck.rotation.set(0, headYaw + (o.facing || 0) * 0.35, -headTilt * Math.PI / 180);
     this.drawFace(expr, blink, look, o.glow || 0);
